@@ -1,0 +1,144 @@
+# [项目编号]_[项目名称]
+
+# 前台
+server {
+    charset utf-8;
+    client_max_body_size 128M;
+
+    listen 80 default_server; ## 监听 ipv4 上的 80 端口
+    #listen [::]:80 default_server ipv6only=on; ## 监听 ipv6 上的 80 端口
+
+    server_name [前台域名];
+    root /opt/htdocs/[项目编号_项目简拼]/front/web/;
+    index index.php;
+
+    # access_log /opt/log/nginx/[项目编号_项目简拼]-front-access.log;
+    access_log off;
+    error_log /opt/log/nginx/[项目编号_项目简拼]-front-error.log;
+
+    location / {
+        # 如果找不到真实存在的文件，把请求分发至 index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # 若取消下面这段的注释，可避免 Yii 接管不存在文件的处理过程（404）
+    #location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+    #    try_files $uri =404;
+    #}
+    #error_page 404 /404.html;
+
+    # 拒绝访问/ assets目录下的php文件
+    location ~ ^/assets/.*\.php$ {
+        deny all;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        try_files $uri =404;
+    }
+
+    location ~ ^/robots.txt$ {
+        deny all;
+    }
+
+    location ~* /\. {
+        deny all;
+    }
+}
+
+# 后台
+server {
+    charset utf-8;
+    client_max_body_size 128M;
+
+    listen 80; ## 监听 ipv4 上的 80 端口
+    #listen [::]:80 default_server ipv6only=on; ## 监听 ipv6 上的 80 端口
+
+    server_name [后台域名];
+    root /opt/htdocs/[项目编号_项目简拼]/web/;
+    index index.php;
+
+    # access_log /opt/log/nginx/[项目编号_项目简拼]-admin-access.log;
+    access_log off;
+    error_log /opt/log/nginx/[项目编号_项目简拼]-admin-error.log;
+
+    location / {
+        # 如果找不到真实存在的文件，把请求分发至 index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # 若取消下面这段的注释，可避免 Yii 接管不存在文件的处理过程（404）
+    #location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+    #    try_files $uri =404;
+    #}
+    #error_page 404 /404.html;
+
+    # 拒绝访问/ assets目录下的php文件
+    location ~ ^/assets/.*\.php$ {
+        deny all;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        try_files $uri =404;
+    }
+
+    location ~ ^/robots.txt$ {
+        deny all;
+    }
+
+    location ~* /\. {
+        deny all;
+    }
+}
+
+# Api
+server {
+    charset utf-8;
+    client_max_body_size 128M;
+
+    listen 80; ## 监听 ipv4 上的 80 端口
+    #listen [::]:80 default_server ipv6only=on; ## 监听 ipv6 上的 80 端口
+
+    server_name [API域名];
+    root /opt/htdocs/[项目编号_项目简拼]/api/web/;
+    index index.php;
+
+    # access_log /opt/log/nginx/[项目编号_项目简拼]-api-access.log;
+    access_log off;
+    error_log /opt/log/nginx/[项目编号_项目简拼]-api-error.log;
+
+    location / {
+        # Redirect everything that isn't a real file to index.php
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # 若取消下面这段的注释，可避免 Yii 接管不存在文件的处理过程（404）
+    #location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+    #    try_files $uri =404;
+    #}
+    #error_page 404 /404.html;
+
+    # 拒绝访问/ assets目录下的php文件
+    location ~ ^/assets/.*\.php$ {
+        deny all;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        try_files $uri =404;
+    }
+
+    location ~* /\. {
+        deny all;
+    }
+}

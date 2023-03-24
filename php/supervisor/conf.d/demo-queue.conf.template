@@ -1,0 +1,11 @@
+[program:demo-queue-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=/usr/local/bin/php /opt/htdocs/[项目编号_项目简拼]/yii queue/listen --verbose=1 --color=0
+autostart=true
+autorestart=true
+user=www-data
+# 开启的进程数，后期可依据处理量变化调整
+numprocs=4
+redirect_stderr=true
+# 队列运行时所有向终端的输出的转储文件路径
+stdout_logfile=/opt/htdocs/[项目编号_项目简拼]/console/runtime/queue.log

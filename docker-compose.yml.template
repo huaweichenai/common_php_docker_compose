@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+    # Nginx容器
+    nginx:
+        image: nginx:local
+        volumes:
+            - [本机项目路径]:/opt/htdocs/[项目编号_项目简拼]:cached
+            - ./nginx:/etc/nginx/conf.d:ro
+            - ./opt/log/nginx:/opt/log/nginx:delegated
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - default
+        depends_on:
+            - php
+        restart: always
+
+    # PHP容器
+    php:
+        build: ./php
+        volumes:
+            - [本机项目路径]:/opt/htdocs/[项目编号_项目简拼]:cached
+        expose:
+            - "9000"
+        networks:
+            default:
+                aliases:
+                    - php
+        depends_on:
+            - mysql
+        restart: always
+
+    # Mysql容器
+    mysql:
+        image: mysql:local-5
+        volumes:
+            - ./opt/data/mysql:/var/lib/mysql:delegated
+        ports:
+            - "33066:3306"
+        networks:
+            default:
+                aliases:
+                    - mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 3330333
+        restart: always
+
+networks:
+    default:
+        external: false
