@@ -1,0 +1,5 @@
+.env
+opt/data
+opt/log
+
+docker-compose.yml
